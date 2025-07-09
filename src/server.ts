@@ -11,11 +11,10 @@ import {
   RedditMentionsResponseSchema,
   ErrorResponse,
 } from "./types";
-
-process.loadEnvFile();
+import { Env } from "./config";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Env.PORT || 3000;
 
 app.use(express.json());
 

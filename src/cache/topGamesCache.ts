@@ -1,6 +1,7 @@
 import { GameData } from "../types";
 import { scrapeSteamchartsData } from "../scrapers/steamchartsScraper";
 import { saveJson, saveGamesToCsv } from "../utils/fileHandler";
+import { Env } from "../config";
 
 interface CacheEntry {
   data: GameData[];
@@ -9,10 +10,7 @@ interface CacheEntry {
 
 let topGamesCache: CacheEntry | null = null;
 
-const CACHE_DURATION_SECONDS = parseInt(
-  process.env.CACHE_DURATION_SECONDS || "3600",
-  10,
-);
+const CACHE_DURATION_SECONDS = Env.CACHE_DURATION_SECONDS;
 const CACHE_DURATION_MS = CACHE_DURATION_SECONDS * 1000;
 
 const isCacheValid = (): boolean => {

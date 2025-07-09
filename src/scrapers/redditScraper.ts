@@ -1,38 +1,19 @@
 import Snoowrap from "snoowrap";
 import { RedditMentions } from "../types";
-
-process.loadEnvFile();
-const REDDIT_CLIENT_ID = process.env.REDDIT_CLIENT_ID;
-const REDDIT_CLIENT_SECRET = process.env.REDDIT_CLIENT_SECRET;
-const REDDIT_USER_AGENT = process.env.REDDIT_USER_AGENT;
-const REDDIT_USERNAME = process.env.REDDIT_USERNAME;
-const REDDIT_PASSWORD = process.env.REDDIT_PASSWORD;
+import { Env } from "../config";
 
 export async function getRedditMentions(
   gameName: string,
   daysBack: number = 30,
 ): Promise<RedditMentions[]> {
-  if (
-    !REDDIT_CLIENT_ID ||
-    !REDDIT_CLIENT_SECRET ||
-    !REDDIT_USER_AGENT ||
-    !REDDIT_USERNAME ||
-    !REDDIT_PASSWORD
-  ) {
-    console.warn(
-      "[RedditScraper] Reddit API credentials not fully set. Skipping Reddit data collection.",
-    );
-    return [];
-  }
-
   let reddit: Snoowrap;
   try {
     reddit = new Snoowrap({
-      userAgent: REDDIT_USER_AGENT,
-      clientId: REDDIT_CLIENT_ID,
-      clientSecret: REDDIT_CLIENT_SECRET,
-      username: REDDIT_USERNAME,
-      password: REDDIT_PASSWORD,
+      userAgent: Env.REDDIT_USER_AGENT,
+      clientId: Env.REDDIT_CLIENT_ID,
+      clientSecret: Env.REDDIT_CLIENT_SECRET,
+      username: Env.REDDIT_USERNAME,
+      password: Env.REDDIT_PASSWORD,
     });
     console.log("[RedditScraper] Reddit API initialized successfully.");
   } catch (e: any) {
