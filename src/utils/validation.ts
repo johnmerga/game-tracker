@@ -21,12 +21,12 @@ export const validateGameNameParam = (gameName: string) => {
 };
 
 export const formatValidationError = (
-  errors: z.ZodIssue[],
+  errors: any,
 ): z.infer<typeof ErrorResponseSchema> => {
   return {
     status: "error",
     message: "Validation failed",
-    details: errors.map((err) => ({
+    details: errors.map((err: any) => ({
       path: err.path.join("."),
       message: err.message,
       code: err.code,

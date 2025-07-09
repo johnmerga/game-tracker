@@ -1,10 +1,34 @@
 import { z } from "zod";
 
 export const GameDayHoursSchema = z.object({
+  //ignoring Invalid Date, Last 30 Days
   Date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format"),
-  Hours: z.number().int().min(0),
+    .regex(/^\d{1,2}\/\d{1,2}\/\d{4}$/, "Date must be in MM/DD/YYYY format")
+    .or(
+      z.literal("Last 30 Days", {
+        description: "Special case for the last 30 days label",
+      }),
+    )
+    .or(
+      z.literal("Invalid Date", {
+        description: "Special case for invalid date",
+      }),
+    ),
+  Hours: z
+    .number()
+    .int()
+    .min(0)
+    .or(
+      z.literal(null, {
+        description: "Special case for no data (null)",
+      }),
+    )
+    .or(
+      z.literal(NaN, {
+        description: "Special case for no data (NaN)",
+      }),
+    ),
 });
 
 export const GameDataSchema = z.object({
@@ -55,3 +79,18 @@ export const GameNameParamSchema = z.object({
     .min(1, "Game name is required")
     .transform((s) => decodeURIComponent(s)),
 });
+// testing
+// (async () => {
+//   try {
+//     // read from json
+//     const data = await require("../../data/top_games_20250709_020215.json");
+//     const validationResult = TopGamesResponseSchema.safeParse(data);
+//     if (!validationResult.success) {
+//       console.error("Validation failed:", validationResult.error.errors);
+//     } else {
+//       console.log("Validation succeeded:", validationResult.data);
+//     }
+//   } catch (r) {
+//     console.error("Error reading or validating JSON:", r);
+//   }
+// })();
