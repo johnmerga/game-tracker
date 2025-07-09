@@ -17,12 +17,14 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
     // 1. Launch a headless browser instance
     browser = await puppeteer.launch({
       headless: true,
+      executablePath: process.env.CHROME_BIN || '/usr/bin/chromium-browser',
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-accelerated-2d-canvas",
         "--disable-gpu",
+        "--window-size=1920,1080"
       ],
     });
     const page: Page = await browser.newPage();
