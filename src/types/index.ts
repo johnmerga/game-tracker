@@ -79,18 +79,3 @@ export const GameNameParamSchema = z.object({
     .min(1, "Game name is required")
     .transform((s) => decodeURIComponent(s)),
 });
-// testing
-// (async () => {
-//   try {
-//     // read from json
-//     const data = await require("../../data/top_games_20250709_020215.json");
-//     const validationResult = TopGamesResponseSchema.safeParse(data);
-//     if (!validationResult.success) {
-//       console.error("Validation failed:", validationResult.error.errors);
-//     } else {
-//       console.log("Validation succeeded:", validationResult.data);
-//     }
-//   } catch (r) {
-//     console.error("Error reading or validating JSON:", r);
-//   }
-// })();

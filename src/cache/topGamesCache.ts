@@ -59,13 +59,3 @@ export async function getCachedTopGames(): Promise<GameData[]> {
     return [];
   }
 }
-
-// // testing
-// (async () => {
-//   try {
-//     const games = await getCachedTopGames();
-//     console.log("Cached Top Games:", games);
-//   } catch (error) {
-//     console.error("Error fetching cached top games:", error);
-//   }
-// })();

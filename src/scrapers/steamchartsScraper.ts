@@ -8,7 +8,7 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export async function scrapeSteamchartsData(): Promise<GameData[]> {
   let browser: Browser | undefined;
   try {
-    // 1. Launch a headless browser instance
+    //  launch a headless browser instance
     browser = await puppeteer.launch({
       headless: true,
       executablePath: process.env.CHROME_BIN || "/usr/bin/chromium-browser",
@@ -158,7 +158,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
           );
           const hoursValue = parseInt(hoursText.replace(/,/g, ""), 10);
 
-          // Ensure the entry for this day is present and update it
+          // checking the entry for this day is present and update it
           gamesData[gameIdx].HoursPlayed30Days[dayIndex] = {
             Date: dateForDay,
             Hours: hoursValue,
@@ -167,7 +167,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
           console.warn(
             `[SteamchartsScraper] Hours Played column not found for game ${gamesData[gameIdx].GameName} on day ${dayIndex + 1}.`,
           );
-          // If not found, ensure the entry for this day is still present with default/zero
+          // If not found, checking the entry for this day is still present with default/zero
           gamesData[gameIdx].HoursPlayed30Days[dayIndex] = {
             Date: dateForDay,
             Hours: 0,
@@ -190,17 +190,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
     return []; // Return an empty array on error
   } finally {
     if (browser) {
-      await browser.close(); // Ensure browser is closed
+      await browser.close(); // checking browser is closed
     }
   }
 }
-
-// testing
-// (async () => {
-//   try {
-//     const games = await scrapeSteamchartsData();
-//     console.log("Cached Top Games:", games);
-//   } catch (error) {
-//     console.error("Error fetching cached top games:", error);
-//   }
-// })();
