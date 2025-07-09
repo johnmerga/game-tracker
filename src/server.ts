@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { Env } from "./config"; // Import Env from config
 import { errorHandler } from "./middleware/errorHandler";
 import { validateRequest } from "./middleware/validationMiddleware";
@@ -10,6 +11,7 @@ const app = express();
 const PORT = Env.PORT;
 
 app.use(express.json());
+app.use(cors({ origin: "*" }));
 
 app.get("/api/top-games", getTopGames);
 app.get(
