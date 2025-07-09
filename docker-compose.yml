@@ -10,10 +10,13 @@ services:
       - .env
     environment:
       - NODE_ENV=production
+      - CHROME_BIN=/usr/bin/chromium
     volumes:
       - .:/app
       - /app/node_modules
 
+    command: ["npm", "start"]
+    # command: ["tail", "-f", "/dev/null"]
   client:
     build:
       context: ./client
@@ -23,8 +26,8 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV=production
-      - VITE_API_BASE_URL= ${VITE_API_BASE_URL}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL}
+      NODE_ENV: "production"
     depends_on:
       - backend
     volumes:
@@ -32,7 +35,7 @@ services:
       - /app/node_modules
 
     # command: ["tail", "-f", "/dev/null"]
-    command: ["npm", "start"]
+    command: sh -c "npm run build && npm run start"
 
 networks:
   default:

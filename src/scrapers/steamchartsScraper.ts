@@ -1,47 +1,41 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import { GameData, GameDayHours } from "../types";
 
-// --- Configuration ---
 const STEAMCHARTS_URL = "https://steamcharts.com/";
 
-// --- Utility function for delay ---
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/**
- * Scrapes top games data from Steamcharts, including 30-day hours played.
- * @returns A Promise that resolves to an array of GameData objects.
- */
 export async function scrapeSteamchartsData(): Promise<GameData[]> {
   let browser: Browser | undefined;
   try {
     // 1. Launch a headless browser instance
     browser = await puppeteer.launch({
       headless: true,
-      executablePath: process.env.CHROME_BIN || '/usr/bin/chromium-browser',
+      executablePath: process.env.CHROME_BIN || "/usr/bin/chromium-browser",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-accelerated-2d-canvas",
         "--disable-gpu",
-        "--window-size=1920,1080"
+        "--window-size=1920,1080",
       ],
     });
     const page: Page = await browser.newPage();
 
-    // 2. Set a realistic User-Agent to mimic a real browser
+    // set a realistic user-agent to mimic a real browser
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
     );
 
     console.log(`[SteamchartsScraper] Navigating to ${STEAMCHARTS_URL}...`);
-    // 3. Navigate to the URL and wait until the DOM is loaded
+    //  navigate to the url and wait until the dom is loaded
     await page.goto(STEAMCHARTS_URL, {
       waitUntil: "domcontentloaded",
       timeout: 60000,
     });
 
-    // 4. Wait for the specific table element and its rows to be available
+    //  wait for the specific table element and its rows to be available
     console.log(
       "[SteamchartsScraper] Waiting for '#top-games' element and its rows...",
     );
@@ -72,7 +66,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
         const currentPlayers = parseNumber(columns[2].textContent || "0");
         const totalHoursPlayed = parseNumber(columns[5].textContent || "0"); // Original 'Hours Played' is total
 
-        // Explicitly type HoursPlayed30Days as GameDayHours[] from the start
+        // explicitly type hoursplayed30days as gamedayhours[] from the start
         const hoursPlayed30Days: GameDayHours[] = Array(30)
           .fill(null)
           .map(() => ({ Date: "", Hours: 0 }));
@@ -98,8 +92,8 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
       `[SteamchartsScraper] Initial data extracted for ${gamesData.length} games.`,
     );
 
-    // --- Step 2: Extract 30-day hours played by hovering on the first game's chart ---
-    // Find the chart column for the first game's row
+    //  extract 30-day hours played by hovering on the first game's chart
+    // find the chart column for the first game's row
     const firstGameChartColumn = await rowHandles[0]?.$("td.chart.period-col");
     if (!firstGameChartColumn) {
       console.error(
@@ -108,7 +102,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
       return gamesData; // Return what we have
     }
 
-    // Get all the individual day bars (rect elements) within the first game's chart
+    // get all the individual day bars (rect elements) within the first game's chart
     const dayBarHandles = await firstGameChartColumn.$$("g rect.hours-bar");
     console.log(
       `[SteamchartsScraper] Found ${dayBarHandles.length} daily bars in the first game's chart.`,
@@ -121,7 +115,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
       return gamesData;
     }
 
-    // Get the handle for the element that displays the date on hover
+    // get the handle for the element that displays the date on hover
     const chartHeadElement = await page.$("#topgames-chart-head");
     if (!chartHeadElement) {
       console.error(
@@ -129,7 +123,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
       );
     }
 
-    // Loop through each day bar (up to 30 days)
+    // loop through each day bar (up to 30 days)
     for (
       let dayIndex = 0;
       dayIndex < Math.min(dayBarHandles.length, 30);
@@ -143,7 +137,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
       await dayBarHandle.hover();
       await sleep(50); // Small pause for the DOM to update after hover
 
-      // Get the date string from the #topgames-chart-head element
+      // get the date string from the #topgames-chart-head element
       let dateForDay = "";
       if (chartHeadElement) {
         dateForDay = await page.evaluate(
@@ -152,7 +146,7 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
         );
       }
 
-      // Now, for this specific day, extract the 'Hours Played' value for ALL games
+      // now, for this specific day, extract the 'hours played' value for all games
       for (let gameIdx = 0; gameIdx < gamesData.length; gameIdx++) {
         const hoursPlayedColumnHandle = await rowHandles[gameIdx].$(
           "td.num.period-col.player-hours",
