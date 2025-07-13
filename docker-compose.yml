@@ -5,12 +5,12 @@ services:
     build: .
     container_name: game-tracker-backend
     ports:
-      - "${PORT}:3000"
+      - "${PORT}:${PORT}"
     env_file:
       - .env
     environment:
       - NODE_ENV=production
-      - CHROME_BIN=/usr/bin/chromium
+      - CHROME_BIN=/usr/bin/chromium-browser
     volumes:
       - .:/app
       - /app/node_modules

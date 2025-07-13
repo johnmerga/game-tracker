@@ -5,7 +5,7 @@ import {
   RedditMentions,
 } from "../types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 console.log("------------------------API Base URL:", API_BASE_URL);
 
 export const fetchTopGames = async (): Promise<TopGamesResponse> => {
@@ -57,7 +57,7 @@ export const fetchRedditMentions = async (
 ): Promise<RedditMentions> => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/reddit-mentions/${encodeURIComponent(gameName)}`,
+      `${API_BASE_URL}/reddit-mentions/${encodeURIComponent(gameName)}`,
     );
 
     if (!response.ok) {
