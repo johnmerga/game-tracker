@@ -9,16 +9,28 @@ export async function scrapeSteamchartsData(): Promise<GameData[]> {
   let browser: Browser | undefined;
   try {
     //  launch a headless browser instance
-    browser = await puppeteer.launch({
+
+    const browser = await puppeteer.launch({
+      executablePath: "/usr/bin/chromium-browser",
       headless: true,
-      executablePath: process.env.CHROME_BIN || "/usr/bin/chromium-browser",
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-accelerated-2d-canvas",
         "--disable-gpu",
-        "--window-size=1920,1080",
+        "--window-size=1920x1080",
+        "--disable-extensions",
+        "--disable-plugins",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-renderer-backgrounding",
+        "--disable-features=TranslateUI",
+        "--disable-ipc-flooding-protection",
+        "--enable-features=NetworkService,NetworkServiceInProcess",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--use-mock-keychain",
       ],
     });
     const page: Page = await browser.newPage();

@@ -1,5 +1,4 @@
 version: "3.9"
-
 services:
   backend:
     build: .
@@ -11,12 +10,10 @@ services:
     environment:
       - NODE_ENV=production
       - CHROME_BIN=/usr/bin/chromium-browser
-    volumes:
-      - .:/app
-      - /app/node_modules
-
-    command: ["npm", "start"]
+      - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+      - PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
     # command: ["tail", "-f", "/dev/null"]
+    command: ["npm", "run", "start"]
   client:
     build:
       context: ./client
